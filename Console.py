@@ -43,18 +43,22 @@ class Console(cmd.Cmd):
         self.subgraph = self.manager.retrieve(line)
         self.subindex = line
 
-    def do_find(self, line):
+    def do_find(self, _):
         label, props = self._ask_node()
+        rlabel = ""
+        elabel, eprops = "", {}
 
-        rlabel = raw_input("Enter a relationship label, or newline to search > ")
-        if rlabel is not "": n = raw_input("Add an end node? > ")
-        if n == "yes" or n == 'y': elabel, eprops = self._ask_node()
+        n = raw_input("\nAdd a relationship? > ")
+        if (n == "yes" or n == 'y'):
+            rlabel = raw_input("Enter a relationship label > ")
+            elabel, eprops = self._ask_node()
+
         self.manager.match_node(label, props, rlabel, elabel, eprops)
 
     @staticmethod
     def _ask_node():
         props = {}
-        label = raw_input("Input label to search with, > ")
+        label = raw_input("Input label to search with > ")
 
         key = "init"
         while key is not "":

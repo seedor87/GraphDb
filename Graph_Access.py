@@ -36,19 +36,29 @@ class GraphManager(object):
         else: self.committed[index] = subgraph
 
     def match_node(self, label, props, rlabel, elabel, eprops):
-        propstr = ','.join([x+'=' + (y if y.isdigit() else ('"'+y+'"'))
-                            for x, y in props.iteritems()])
-        if propstr is not "": propstr = '{'+propstr+'}'
+        propstr = self._prop_dict_str(props)
+        label = ':'+label if label else ""
+        cipher = "MATCH (m{0}{1})".format(label, propstr)
+        cipher2 = " RETURN m"
 
-        cipher = "MATCH (m:{0} {1})".format(label, propstr)
-        if  rlabel: cipher.append("-[:{0}]->").format(rlabel)
+        if rlabel:
+            cipher+=("-[r{0}]->").format(":"+rlabel if rlabel else "")
+            cipher2+=", r"
 
-        if elabel:
-            epropstr = ','.join([x+'=' + (y if y.isdigit() else ('"'+y+'"'))
-                            for x, y in eprops.iteritems()])
-            if epropstr is not "": epropstr = '{'+epropstr+'}'
-        cipher.append("(m:{0} {1})".format(elabel, epropstr))
+        if rlabel and elabel:
+            propstr = self._prop_dict_str(eprops)
+            elabel = "" if not elabel else ':'+elabel
+            cipher+=("(n{0}{1})".format(elabel, propstr))
+            cipher2+=", n"
 
-        self.graph.data(cipher)
+        print cipher+cipher2
+        print self.graph.data(cipher+cipher2)
         # {u'm': (c91495f:Person {bearing:"100",lat:"100",long:"80",name:"jason bourne",percentmatched:"99"})}
         # convert string to nodes.
+
+    @staticmethod
+    def _prop_dict_str(props):
+        propstr = ','.join([x+'=' + (y if y.isdigit() else ('"'+y+'"'))
+                            for x, y in props.iteritems()])
+        if propstr is not "": propstr = ' {'+propstr+'}'
+        return propstr
