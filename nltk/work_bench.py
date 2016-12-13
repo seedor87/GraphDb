@@ -46,7 +46,7 @@ def get_all_words(d, list):
 val = 'WORD'
 d = {}
 for s in wn.synsets(val):
-    dictify(d, s, steps=3)
+    dictify(d, s, steps=5)
 pprint(d)
 
 s = set()
