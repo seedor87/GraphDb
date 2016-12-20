@@ -1,5 +1,4 @@
 from nltk.corpus import wordnet as wn
-from collections import defaultdict
 from pprint import pprint
 
 def synset_method_values(synset):
@@ -8,14 +7,12 @@ def synset_method_values(synset):
     for that synset. Returns the list of such pairs.
     """
     name_value_pairs = []
-    # All the available synset methods:
     method_names = ['hypernyms', 'instance_hypernyms', 'hyponyms', 'instance_hyponyms',
                     'member_holonyms', 'substance_holonyms', 'part_holonyms',
                     'member_meronyms', 'substance_meronyms', 'part_meronyms',
                     'attributes', 'entailments', 'causes', 'also_sees', 'verb_groups',
                     'similar_tos']
     for method_name in method_names:
-        # Get the method's value for this synset based on its string name.
         method = getattr(synset, method_name)
         vals = method()
         if not vals or vals is [] or vals is None:
@@ -24,13 +21,9 @@ def synset_method_values(synset):
             name_value_pairs.append((method_name, vals))
     return name_value_pairs
 
-def generator(val, steps):
-    dic = {}
-    total = dictify(dic, val, steps=steps)
-    pprint(dic)
-    print '-' * 1000
-    pprint(dict([(val, total)]))
-
+def generator(total, val, steps):
+    ret = dictify(total, val, steps=steps)
+    return dict([(val, ret)])
 
 def dictify(dic, val, steps=1):
     d = {}
@@ -55,29 +48,26 @@ def get_all_words(d, list):
         for key, val in v.iteritems():
             if isinstance(val, dict):
                 get_all_words(val, list)
+            else:
+                list |= set(val)
 
+val = None
+while 1:
+    val = raw_input('Enter the word here >>> ')
+    if val == 'q':
+        break
+    sets = wn.synsets(val)
+    total = {}
+    for s in sets:
+        generator(total, s, steps=3)
+    pprint(total)
 
-val = 'WORD'
-sets = wn.synsets(val)
-for set in sets:
-    gen = generator(set, steps=1)
+    s = set()
+    get_all_words(total, s)
+    pprint(s)
+    print len(s)
 
-# while 1:
-#     try:
-#         pprint(gen.next())
-#         print '-' * 1000
-#     except Exception as e:
-#         break
-
-# s = set()
-# get_all_words(d, s)
-# pprint(s)
-# print len(s)
-
-# l = set()
-# get_all_words(d, l)
-# print l
-#
+"""Debug"""
 # print 'trace'
 # print d['WORD']
 # print d['WORD']['hypo']
@@ -86,6 +76,5 @@ for set in sets:
 # print d['WORD']['hypo']['wordA']['hyper']['wordB']
 # print d['WORD']['hypo']['wordA']['hyper']['wordB']['hypo']
 # print d['WORD']['hypo']['wordA']['hyper']['wordB']['hypo']['wordC']
-#
 # print len(d)
 

@@ -19,7 +19,3 @@ while 1:
         print x.next()
     except Exception as e:
         break
-
-dic = {0,1,2,3}
-val = 'a'
-print dict([val, dic])
