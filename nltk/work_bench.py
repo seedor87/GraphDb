@@ -21,9 +21,13 @@ def synset_method_values(synset):
             name_value_pairs.append((method_name, vals))
     return name_value_pairs
 
-def generator(total, val, steps):
-    ret = dictify(total, val, steps=steps)
-    return dict([(val, ret)])
+def generator(synsets, steps):
+    for i in range(1, steps+1):
+        total = {}
+        for s in synsets:
+            ret = dictify({}, s, steps=i)
+            total[s] = ret
+        yield total
 
 def dictify(dic, val, steps=1):
     d = {}
@@ -41,7 +45,6 @@ def dictify(dic, val, steps=1):
                 d[meth][set] = dictify(dic[val][meth], set, steps-1)
     return d
 
-
 def get_all_words(d, list):
     for k, v in d.iteritems():
         list.add(k)
@@ -51,30 +54,25 @@ def get_all_words(d, list):
             else:
                 list |= set(val)
 
-val = None
-while 1:
-    val = raw_input('Enter the word here >>> ')
-    if val == 'q':
-        break
-    sets = wn.synsets(val)
-    total = {}
-    for s in sets:
-        generator(total, s, steps=3)
-    pprint(total)
+if __name__ == "__main__":
+    val = None
+    while 1:
+        val = raw_input('Enter the word here >>> ')
+        if val == 'q':
+            break
+        synsets = wn.synsets(val)
+        generator = generator(synsets, steps=3)
+        while 1:
+            try:
+                print "-" * 100
+                output = next(generator)
+                # pprint(output)
+                print '- - ' * 25
+                set_of_all_words = set()
+                get_all_words(output, set_of_all_words)
+                pprint(set_of_all_words)
+                print len(set_of_all_words)
 
-    s = set()
-    get_all_words(total, s)
-    pprint(s)
-    print len(s)
-
-"""Debug"""
-# print 'trace'
-# print d['WORD']
-# print d['WORD']['hypo']
-# print d['WORD']['hypo']['wordA']
-# print d['WORD']['hypo']['wordA']['hyper']
-# print d['WORD']['hypo']['wordA']['hyper']['wordB']
-# print d['WORD']['hypo']['wordA']['hyper']['wordB']['hypo']
-# print d['WORD']['hypo']['wordA']['hyper']['wordB']['hypo']['wordC']
-# print len(d)
-
+            except Exception as e:
+                print e
+                break
