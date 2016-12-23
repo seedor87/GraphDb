@@ -1,117 +1,25 @@
-import nltk
 from nltk.corpus import wordnet as wn
-from pprint import pprint
 
-class word_relation_generator():
-
-    def __init__(self):
-        """TODO"""
-        pass
-
-    class syn_wrapper(nltk.corpus.reader.wordnet.Synset):
-        """TODO"""
-
-        def __str__(self):
-            print super(word_relation_generator.syn_wrapper, None).__str__()
-
-    def synset_method_values(self, synset):
-        """
-        For a given synset, get all the (method_name, value) pairs
-        for that synset. Returns the list of such pairs.
-        """
-        name_value_pairs = []
-        method_names = ['hypernyms', 'instance_hypernyms', 'hyponyms', 'instance_hyponyms',
-                        'member_holonyms', 'substance_holonyms', 'part_holonyms',
-                        'member_meronyms', 'substance_meronyms', 'part_meronyms',
-                        'attributes', 'entailments', 'causes', 'also_sees', 'verb_groups',
-                        'similar_tos']
-        for method_name in method_names:
-            method = getattr(synset, method_name)
-            vals = method()
-            if not vals or vals is [] or vals is None:
-                pass
-            else:
-                name_value_pairs.append((method_name, vals))
-        return name_value_pairs
-
-    def make_dictionary_all_paths(self, synsets, steps):
-        for i in range(1, steps+1):
-            total = {}
-            for s in synsets:
-                total[s] = self.recurse_dictify(s, steps=i)
-            yield total
-
-    def recurse_dictify(self, val, steps=1):
-        ret = {}
-        if steps < 2:
-            for meth, sets in self.synset_method_values(val):
-                ret[meth] = sets
-        else:
-            for meth, sets in self.synset_method_values(val):
-                ret[meth] = {}
-                for set in sets:
-                    ret[meth][set] = self.recurse_dictify(set, steps - 1)
-        return ret
-
-    def make_set_all_words(self, d, list):
-        for k, v in d.iteritems():
-            list.add(k)
-            for key, val in v.iteritems():
-                if isinstance(val, dict):
-                    self.make_set_all_words(val, list)
-                else:
-                    list |= set(val)
-
-    def generate_dictionary_all_paths(self, word, steps):
-        generator = self.make_dictionary_all_paths(wn.synsets(word), steps)
-        for i in range(0, steps):
-            yield next(generator)
-
-    def generate_set_all_words(self, word, steps):
-        generator = self.generate_dictionary_all_paths(word, steps)
-        for i in range(0, steps):
-            paths = next(generator)
-            set_of_all_words = set()
-            self.make_set_all_words(paths, set_of_all_words)
-            yield set_of_all_words
-
-def main():
+def path_similarity(source, destination):
     """
-    This method demos example use in practical application
+    synset1.path_similarity(synset2): Return a score denoting how similar two word senses are, based on the shortest path that connects the senses in the is-a (hypernym/hypnoym) taxonomy.
+    The score is in the range 0 to 1. By default, there is now a fake root node added to verbs so for cases where previously a path could not be found---and None was returned---it should return a value.
+    The old behavior can be achieved by setting simulate_root to be False. A score of 1 represents identity i.e. comparing a sense with itself will return 1.
     """
-    word, steps = 'test', 3
-    wrg = word_relation_generator()
-    gen = wrg.generate_set_all_words(word, steps)
-    # gen = wrg.generate_dictionary_all_paths(word, steps)
-    for i in range(0, steps):
-        output = gen.next()
-        pprint(output)
-        print len(output)
-        print '=' * 1000
+    return source.path_similarity(destination)
 
-def debug():
-    """DEBUG for testing"""
+def wup_similarity(source, destination, simulate_root=False):
+    """
+    synset1.wup_similarity(synset2): Wu-Palmer Similarity: Return a score denoting how similar two word senses are, based on the depth of the two senses in the taxonomy and that of their Least Common Subsumer (most specific ancestor node). Note that at this time the scores given do _not_ always agree with those given by Pedersen's Perl implementation of Wordnet Similarity.
+    The LCS does not necessarily feature in the shortest path connecting the two senses, as it is by definition the common ancestor deepest in the taxonomy, not closest to the two senses. Typically, however, it will so feature. Where multiple candidates for the LCS exist, that whose shortest path to the root node is the longest will be selected. Where the LCS has multiple paths to the root, the longer path is used for the purposes of the calculation.
+    """
+    return source.wup_similarity(destination, simulate_root=simulate_root)
 
-    wrg = word_relation_generator()
-    while 1:
-        val = raw_input('Enter the word here >>> ')
-        if val == 'q':
-            break
-        synsets = wn.synsets(val)
-        generator = wrg.make_dictionary_all_paths(synsets, steps=3)
-        while 1:
-            try:
-                print "-" * 100
-                output = next(generator)
-                pprint(output)
-                print '- - ' * 25
-                set_of_all_words = set()
-                wrg.make_set_all_words(output, set_of_all_words)
-                pprint(set_of_all_words)
-                print len(set_of_all_words)
-            except Exception as e:
-                print e
-                break
+def lowest_common_hypernym(source, destination):
+    return source.lowest_common_hypernyms(destination)
 
-if __name__ == "__main__":
-    main()
+# while 1:
+#     word = raw_input('Enter the word here >>> ')
+#     for s in wn.synsets(word):
+#         for _s in wn.synsets(word):
+#             print "%s\t%s\t%s" % (s, _s, lowest_common_hypernym(s, _s))
