@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet as wn
+from pprint import pprint
 
 def path_similarity(source, destination):
     """
@@ -18,8 +19,19 @@ def wup_similarity(source, destination, simulate_root=False):
 def lowest_common_hypernym(source, destination):
     return source.lowest_common_hypernyms(destination)
 
+def gen_closure(word, method, depth):
+    ret = {}
+    for s in wn.synsets(word):
+        ret[s] = list(s.closure(method, depth=depth))
+    return ret
+
+hypo = lambda s: s.hyponyms()
+hyper = lambda s: s.hypernyms()
+pprint(gen_closure('test', hyper, 3))
+
+"""demo of lowest common hypernym use"""
 # while 1:
-#     word = raw_input('Enter the word here >>> ')
+#     word = raw_input('Enter the word here print  ')
 #     for s in wn.synsets(word):
 #         for _s in wn.synsets(word):
 #             print "%s\t%s\t%s" % (s, _s, lowest_common_hypernym(s, _s))
