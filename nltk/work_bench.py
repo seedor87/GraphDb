@@ -1,6 +1,25 @@
 from nltk.corpus import wordnet as wn
 from pprint import pprint
 
+__meths ={
+    'hypernyms': lambda s: s.hypernyms(),
+    'instance_hypernyms': lambda s: s.instance_hypernyms(),
+    'hyponyms': lambda s: s.hyponyms(),
+    'instance_hyponyms': lambda s: s.instance_hyponyms(),
+    'member_holonyms': lambda s: s.member_holonyms(),
+    'substance_holonyms': lambda s: s.substance_holonyms(),
+    'part_holonyms': lambda s: s.part_holonyms(),
+    'member_meronyms': lambda s: s.member_meronyms(),
+    'substance_meronyms': lambda s: s.substance_meronyms,
+    'part_meronyms': lambda s: s.part_meronyms(),
+    'attributes': lambda s: s.attributes(),
+    'entailments': lambda s: s.entailments(),
+    'causes': lambda s: s.causes(),
+    'also_sees': lambda s: s.also_sees(),
+    'verb_groups': lambda s: s.verb_groups(),
+    'similar_tos': lambda s: s.similar_tos()
+}
+
 def path_similarity(source, destination):
     """
     synset1.path_similarity(synset2): Return a score denoting how similar two word senses are, based on the shortest path that connects the senses in the is-a (hypernym/hypnoym) taxonomy.
@@ -19,15 +38,22 @@ def wup_similarity(source, destination, simulate_root=False):
 def lowest_common_hypernym(source, destination):
     return source.lowest_common_hypernyms(destination)
 
-def gen_closure(word, method, depth):
+def gen_closure(word, depth, method=None):
+
     ret = {}
-    for s in wn.synsets(word):
-        ret[s] = list(s.closure(method, depth=depth))
+    if method is not None:
+        for s in wn.synsets(word):
+            ret[s] = list(s.closure(__meths[method], depth=depth))
+    else:
+        for s in wn.synsets(word):
+            ret[s] = {}
+            for m in __meths.keys():
+                ins = list(s.closure(__meths[m], depth=depth))
+                if ins:
+                    ret[s][m] = ins
     return ret
 
-hypo = lambda s: s.hyponyms()
-hyper = lambda s: s.hypernyms()
-pprint(gen_closure('test', hyper, 3))
+pprint(gen_closure('test', 3))
 
 """demo of lowest common hypernym use"""
 # while 1:
@@ -35,3 +61,6 @@ pprint(gen_closure('test', hyper, 3))
 #     for s in wn.synsets(word):
 #         for _s in wn.synsets(word):
 #             print "%s\t%s\t%s" % (s, _s, lowest_common_hypernym(s, _s))
+
+
+

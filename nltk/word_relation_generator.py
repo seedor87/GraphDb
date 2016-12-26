@@ -16,7 +16,7 @@ class word_relation_generator():
     
     def key_wrap(self, synset):
         """
-        Not used.
+        Not used yet
         Can be used to gather the important features of the str() representation of nltk.corpus's synset class
         """
         _syn_set = str(synset)
