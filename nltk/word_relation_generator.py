@@ -62,7 +62,7 @@ class word_relation_generator():
                 name_value_pairs.append((method_name, vals))
         return name_value_pairs
     
-    def gen_closure_dict(self, word, depth, *methods):
+    def make_closure_dict(self, word, depth, *methods):
 
         ret = {}
         _methods = methods if methods else self.meth_keys
@@ -74,7 +74,7 @@ class word_relation_generator():
                     ret[s][m] = ins
         return ret
     
-    def gen_closure_set(self, word, depth, *methods):
+    def make_closure_set(self, word, depth, *methods):
     
         ret = set()
         _methods = methods if methods else self.meth_keys
@@ -82,6 +82,14 @@ class word_relation_generator():
                 for m in _methods:
                     ret |= set(s.closure(self.__meths[m], depth=depth))
         return ret
+
+    def gen_closure_dict(self, word, depth, *methods):
+        for i in range(1, depth+1):
+            yield self.make_closure_dict(word, i, *methods)
+
+    def gen_closure_set(self, word, depth, *methods):
+        for i in range(1, depth+1):
+            yield self.make_closure_set(word, i, *methods)
 
     def make_dictionary_all_paths(self, synsets, depth):
         """
@@ -166,13 +174,20 @@ def debug():
     DEBUG for testing
     """
     wrg = word_relation_generator()
-    pprint(wrg.gen_closure_dict('test', 3))
+    gen = wrg.gen_closure_dict('test', 3)
+    print next(gen)
+    print '-0-' * 100
+    print next(gen)
+    print '-0-' * 100
+    print next(gen)
     print '0' * 100
-    pprint(wrg.gen_closure_dict('test', 3, 'hypernyms'))
+    gen = wrg.gen_closure_dict('test', 3, 'hypernyms')
+    print next(gen)
+    print '-1-' * 100
+    print next(gen)
+    print '-1-' * 100
+    print next(gen)
     print '1' * 100
-    pprint(wrg.gen_closure_set('test', 3))
-    print '0' * 100
-    pprint(wrg.gen_closure_set('test', 3, 'hypernyms'))
     print '01' * 50
 
     part_of_speech = None
