@@ -2,6 +2,7 @@ from nltk.corpus import wordnet as wn
 from pprint import pprint
 
 class word_relation_generator():
+    
     """
     This class encapsulates the tools that are used to collect the paths of word relations as nested dictionaries as a mapping
     The map is used to compart_of_speeche a set of all unique entries of words that exist in the map.
@@ -11,8 +12,28 @@ class word_relation_generator():
         """
         Constructor for instance of class word_relation_generator that uses params to define use
         part_of_speech (pos) can be used to specify smaller domain of words to search for mapping (range: {'v', 'n', 'a'})
+        __meths dictionary is used to store the dynamic functions that are employed to systematically generate all of the word relations
         """
         self.part_of_speech = part_of_speech
+        self.__meths ={
+            'hypernyms': lambda s: s.hypernyms(),
+            'instance_hypernyms': lambda s: s.instance_hypernyms(),
+            'hyponyms': lambda s: s.hyponyms(),
+            'instance_hyponyms': lambda s: s.instance_hyponyms(),
+            'member_holonyms': lambda s: s.member_holonyms(),
+            'substance_holonyms': lambda s: s.substance_holonyms(),
+            'part_holonyms': lambda s: s.part_holonyms(),
+            'member_meronyms': lambda s: s.member_meronyms(),
+            'substance_meronyms': lambda s: s.substance_meronyms,
+            'part_meronyms': lambda s: s.part_meronyms(),
+            'attributes': lambda s: s.attributes(),
+            'entailments': lambda s: s.entailments(),
+            'causes': lambda s: s.causes(),
+            'also_sees': lambda s: s.also_sees(),
+            'verb_groups': lambda s: s.verb_groups(),
+            'similar_tos': lambda s: s.similar_tos()
+        }
+        self.meth_keys = self.__meths.keys()
     
     def key_wrap(self, synset):
         """
@@ -26,33 +47,47 @@ class word_relation_generator():
         num = _syn_set[-4:-2]
         return word, part_of_speech, num
     
-    def synset_method_values(self, synset, method_names=None):
+    def synset_method_values(self, synset, *methods):
         """
         This method is used to collect the tuples of method set pairs on which we define relations.
         The name_value_pairs list is the collection that holds the elements to be returned. These elements are tuples where the first value is the method used to determine the second value of the tuple; a list of words that is the result.
         If no set of words exists for the particular method, no entry is made to the result to be returned.
         """
         name_value_pairs = []
-        if method_names is not None:
-            _method_names = method_names
-        else:
-            _method_names = ['hypernyms', 'instance_hypernyms', 'hyponyms', 'instance_hyponyms',
-                            'member_holonyms', 'substance_holonyms', 'part_holonyms',
-                            'member_meronyms', 'substance_meronyms', 'part_meronyms',
-                            'attributes', 'entailments', 'causes', 'also_sees', 'verb_groups',
-                            'similar_tos']
-        for method_name in _method_names:
+        _methods = methods if methods else self.meth_keys
+        for method_name in _methods:
             method = getattr(synset, method_name)
             vals = method()
             if vals:
                 name_value_pairs.append((method_name, vals))
         return name_value_pairs
+    
+    def gen_closure_dict(self, word, depth, *methods):
 
-    def make_dictionary_all_paths(self, synsets, steps):
+        ret = {}
+        _methods = methods if methods else self.meth_keys
+        for s in wn.synsets(word):
+            ret[s] = {}
+            for m in _methods:
+                ins = list(s.closure(self.__meths[m], depth=depth))
+                if ins:
+                    ret[s][m] = ins
+        return ret
+    
+    def gen_closure_set(self, word, depth, *methods):
+    
+        ret = set()
+        _methods = methods if methods else self.meth_keys
+        for s in wn.synsets(word):
+                for m in _methods:
+                    ret |= set(s.closure(self.__meths[m], depth=depth))
+        return ret
+
+    def make_dictionary_all_paths(self, synsets, depth):
         """
         This method is the feature that creates the mapping of words that is the pathways from key to value.
         """
-        def recurse_dictify(val, steps=1):
+        def recurse_dictify(val, depth=1):
             """
             Recursive method that builds the mapping as value of ret.
                 Pseudo:
@@ -63,20 +98,20 @@ class word_relation_generator():
                             ret[method][set] = call to recurse dictify(set, steps--)
             """
             ret = {}
-            if steps < 2:
+            if depth < 2:
                 for meth, sets in self.synset_method_values(val):
                     ret[meth] = sets
             else:
                 for meth, sets in self.synset_method_values(val):
                     ret[meth] = {}
                     for set in sets:
-                        ret[meth][set] = recurse_dictify(set, steps-1)
+                        ret[meth][set] = recurse_dictify(set, depth - 1)
             return ret
 
-        for i in range(1, steps+1):
+        for i in range(1, depth+1):
             total = {}  # overall dict (mapping) of all synsets and associated recursive mappings
             for s in synsets:
-                total[s] = recurse_dictify(s, steps=i) # total[synset] = new mapping of all related words
+                total[s] = recurse_dictify(s, depth=i) # total[synset] = new mapping of all related words
             yield total
 
     def make_set_all_words(self, dictionary_all_paths, list):
@@ -92,21 +127,21 @@ class word_relation_generator():
                 else:
                     list |= set(sub_set)
 
-    def generate_dictionary_all_paths(self, word, steps):
+    def generate_dictionary_all_paths(self, word, depth):
         """
         Generator for states of nested mapping of all word paths
         """
-        generator = self.make_dictionary_all_paths(wn.synsets(word, pos=self.part_of_speech), steps)
-        for i in range(0, steps):
+        generator = self.make_dictionary_all_paths(wn.synsets(word, pos=self.part_of_speech), depth)
+        for i in range(0, depth):
             yield next(generator)
 
-    def generate_set_all_words(self, word, steps):
+    def generate_set_all_words(self, word, depth):
         """
         Generator for the set of all words in the associated mapping
         Leverages generate_dictionary_all_paths() method to build the mapping from which the set of unique words is made
         """
-        generator = self.generate_dictionary_all_paths(word, steps)
-        for i in range(0, steps):
+        generator = self.generate_dictionary_all_paths(word, depth)
+        for i in range(0, depth):
             paths = next(generator)
             set_of_all_words = set()
             self.make_set_all_words(paths, set_of_all_words)
@@ -130,6 +165,16 @@ def debug():
     """
     DEBUG for testing
     """
+    wrg = word_relation_generator()
+    pprint(wrg.gen_closure_dict('test', 3))
+    print '0' * 100
+    pprint(wrg.gen_closure_dict('test', 3, 'hypernyms'))
+    print '1' * 100
+    pprint(wrg.gen_closure_set('test', 3))
+    print '0' * 100
+    pprint(wrg.gen_closure_set('test', 3, 'hypernyms'))
+    print '01' * 50
+
     part_of_speech = None
     wrg = word_relation_generator()
     while 1:
@@ -137,7 +182,7 @@ def debug():
         if val == 'q':
             break
         synsets = wn.synsets(val, pos=part_of_speech)
-        generator = wrg.make_dictionary_all_paths(synsets, steps=3)
+        generator = wrg.make_dictionary_all_paths(synsets, depth=3)
         while 1:
             try:
                 print "-" * 100
