@@ -63,7 +63,10 @@ class word_relation_generator():
         return name_value_pairs
     
     def make_closure_dict(self, word, depth, *methods):
-
+        """
+        This method leverages the closure method of the nltk package to construct the dictionary of words related, via the optional methods param, to the given word
+        If no method param is specified, all of the possible method calls are applied to the construction process
+        """
         ret = {}
         _methods = methods if methods else self.meth_keys
         for s in wn.synsets(word):
@@ -75,7 +78,10 @@ class word_relation_generator():
         return ret
     
     def make_closure_set(self, word, depth, *methods):
-    
+        """
+        This method leverages the closure method of the nltk package to construct the set of words related, via the optional methods param, to the given word
+        If no method param is specified, all of the possible method calls are applied to the construction process
+        """
         ret = set()
         _methods = methods if methods else self.meth_keys
         for s in wn.synsets(word):
@@ -84,10 +90,16 @@ class word_relation_generator():
         return ret
 
     def gen_closure_dict(self, word, depth, *methods):
+        """
+        Generator pattern for the make_closure_dict method
+        """
         for i in range(1, depth+1):
             yield self.make_closure_dict(word, i, *methods)
 
     def gen_closure_set(self, word, depth, *methods):
+        """
+        Generator pattern for the make_closure_set method
+        """
         for i in range(1, depth+1):
             yield self.make_closure_set(word, i, *methods)
 
@@ -98,12 +110,12 @@ class word_relation_generator():
         def recurse_dictify(val, depth=1):
             """
             Recursive method that builds the mapping as value of ret.
-                Pseudo:
-                    while we have yet reached the limit of steps specified by user:
-                        for each method, set pairing of synset_method_values for word val:
-                        ret[method] = new dictionary
-                        for each synset in list sets:
-                            ret[method][set] = call to recurse dictify(set, steps--)
+            Pseudo-Code:
+                while we have yet reached the limit of steps specified by user:
+                    for each method, set pairing of synset_method_values for word val:
+                    ret[method] = new dictionary
+                    for each synset in list sets:
+                        ret[method][set] = call to recurse dictify(set, steps--)
             """
             ret = {}
             if depth < 2:
