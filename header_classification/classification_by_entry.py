@@ -1,5 +1,6 @@
 import os, random, nltk, datetime, pickle
 from random import randrange
+from csv_read import use
 
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
 select_chars = [':', '/', '.', '1', '2', '9']
@@ -30,6 +31,8 @@ def string_features(word):
         ret['count: {}'.format(char)] = word.count(char)
     return ret
 
+"""
+
 #gen input for training
 type_formats = {('date', random_date): ["%m/%d/%Y", "%Y-%d-%m", "%d.%m.%Y"],
                 ('time', random_date): ["%H:%M:%S", "%H:%M"],
@@ -54,10 +57,11 @@ test_data = prc_slice(labeled_input, 0.67, 1)
 # The training set is used to train the model, and the dev-test set is used to perform error analysis. The test set serves in our final evaluation of the system.
 train_set = [(string_features(n), _class) for (n, _class) in train_data]
 devtest_set = [(string_features(n), _class) for (n, _class) in devtest_data]
-test_set = [(string_features(n), _class) for (n, _class) in test_data]
+# test_set = [(string_features(n), _class) for (n, _class) in test_data]
 
-file_Name = 'pickled_classifier'
+# file_Name = 'pickled_classifier'
 
+"""
 """
 classifier = nltk.NaiveBayesClassifier.train(train_set)
 
@@ -75,6 +79,7 @@ fileObject.close()
 """
 
 # we open the file for reading
+file_Name = 'pickled_classifier'
 fileObject = open(file_Name,'rb')
 classifier = pickle.load(fileObject)
 fileObject.close()
@@ -93,11 +98,20 @@ fileObject.close()
 #     print next_time, classifier.classify(string_features(next_time))
 #     print next_dt, classifier.classify(string_features(next_dt))
 
-for data, cat in test_data:
-    print data, '\t', classifier.classify(string_features(data)), '\t', cat
+input_data = use()
+random.shuffle(input_data)
+test_data = prc_slice(input_data, 0, 0.5)
+devtest_data = prc_slice(input_data, 0.5, 1)
 
-print nltk.classify.accuracy(classifier, test_set) * 100, '%'
-print classifier.show_most_informative_features(5)
+test_set = []
+for data, cat in test_data:
+    feats = string_features(data)
+    print 'data = {:<20} guess = {:<10} category = {:<20}'.format(data, classifier.classify(feats), cat)
+    test_set.append((feats, cat))
+
+print '-' * 100
+print 'Accuracy: {}%'.format(nltk.classify.accuracy(classifier, test_set) * 100)
+print classifier.show_most_informative_features()
 
 errors = []
 for (name, tag) in devtest_data:
@@ -105,4 +119,4 @@ for (name, tag) in devtest_data:
     if guess != tag:
         errors.append( (tag, guess, name) )
 for (tag, guess, name) in sorted(errors):
-    print('correct={:<8} guess={:<8s} name={:<30}'.format(tag, guess, name))
+    print('correct = {:<10} guess = {:<10} entry = {:<30}'.format(tag, guess, name))
