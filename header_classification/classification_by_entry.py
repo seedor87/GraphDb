@@ -1,5 +1,4 @@
-from nltk.corpus import names
-import random, nltk, datetime
+import os, random, nltk, datetime, pickle
 from random import randrange
 
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
@@ -37,7 +36,7 @@ type_formats = {('date', random_date): ["%m/%d/%Y", "%Y-%d-%m", "%d.%m.%Y"],
                 ('date_time', random_date): ["%d/%m/%Y %H:%M:%S"]}
                 # ('float', random_data): []
 
-size = 1000
+size = 10000
 labeled_input = []
 for k, v in type_formats.iteritems():
     len_sub = size / len(type_formats)
@@ -48,39 +47,62 @@ for k, v in type_formats.iteritems():
 # crucial to proper learning
 random.shuffle(labeled_input)
 
-train_names = prc_slice(labeled_input, 0.0, 0.33)
-devtest_names = prc_slice(labeled_input, 0.34, 0.66)
-test_names = prc_slice(labeled_input, 0.67, 1)
+train_data = prc_slice(labeled_input, 0.0, 0.33)
+devtest_data = prc_slice(labeled_input, 0.34, 0.66)
+test_data = prc_slice(labeled_input, 0.67, 1)
+
+# The training set is used to train the model, and the dev-test set is used to perform error analysis. The test set serves in our final evaluation of the system.
+train_set = [(string_features(n), _class) for (n, _class) in train_data]
+devtest_set = [(string_features(n), _class) for (n, _class) in devtest_data]
+test_set = [(string_features(n), _class) for (n, _class) in test_data]
+
+file_Name = 'pickled_classifier'
 
 """
-The training set is used to train the model, and the dev-test set is used to perform error analysis. The test set serves in our final evaluation of the system.
-"""
-train_set = [(string_features(n), _class) for (n, _class) in train_names]
-devtest_set = [(string_features(n), _class) for (n, _class) in devtest_names]
-test_set = [(string_features(n), _class) for (n, _class) in test_names]
 classifier = nltk.NaiveBayesClassifier.train(train_set)
 
-# testing
-iterations = 5
-date_gen = random_date(startDate, iterations)
-time_gen = random_date(startDate, iterations)
-dt_gen = random_date(startDate, iterations)
+# pickle the classifier?
+# open the file for writing
 
-for i in range(iterations+1):
-    next_date = next(date_gen).strftime("%d.%m.%Y")
-    next_time = next(time_gen).strftime("%H:%M:%S")
-    next_dt = next(dt_gen).strftime("%d/%m/%Y %H:%M:%S")
-    print next_date, classifier.classify(string_features(next_date))
-    print next_time, classifier.classify(string_features(next_time))
-    print next_dt, classifier.classify(string_features(next_dt))
+fileObject = open(file_Name,'wb')
+
+# this writes the object a to the
+# file named 'testfile'
+pickle.dump(classifier,fileObject)
+
+# here we close the fileObject
+fileObject.close()
+"""
+
+# we open the file for reading
+fileObject = open(file_Name,'rb')
+classifier = pickle.load(fileObject)
+fileObject.close()
+
+# testing
+# iterations = 5
+# date_gen = random_date(startDate, iterations)
+# time_gen = random_date(startDate, iterations)
+# dt_gen = random_date(startDate, iterations)
+#
+# for i in range(iterations+1):
+#     next_date = next(date_gen).strftime("%d.%m.%Y")
+#     next_time = next(time_gen).strftime("%H:%M:%S")
+#     next_dt = next(dt_gen).strftime("%d/%m/%Y %H:%M:%S")
+#     print next_date, classifier.classify(string_features(next_date))
+#     print next_time, classifier.classify(string_features(next_time))
+#     print next_dt, classifier.classify(string_features(next_dt))
+
+for data, cat in test_data:
+    print data, '\t', classifier.classify(string_features(data)), '\t', cat
 
 print nltk.classify.accuracy(classifier, test_set) * 100, '%'
 print classifier.show_most_informative_features(5)
 
-# errors = []
-# for (name, tag) in devtest_names:
-#     guess = classifier.classify(string_features(name))
-#     if guess != tag:
-#         errors.append( (tag, guess, name) )
-# for (tag, guess, name) in sorted(errors):
-#     print('correct={:<8} guess={:<8s} name={:<30}'.format(tag, guess, name))
+errors = []
+for (name, tag) in devtest_data:
+    guess = classifier.classify(string_features(name))
+    if guess != tag:
+        errors.append( (tag, guess, name) )
+for (tag, guess, name) in sorted(errors):
+    print('correct={:<8} guess={:<8s} name={:<30}'.format(tag, guess, name))
