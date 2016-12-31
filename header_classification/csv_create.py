@@ -2,8 +2,12 @@ import csv, datetime
 from random import randrange
 from pprint import pprint
 
+"""
+Short script used to generate test data for the csv reading, classifcation building and classifier usage testing
+"""
+
+local_file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
-select_chars = [':', '/', '.', '1', '2', '9']
 
 def random_date(start, n):
    current = start
@@ -37,7 +41,7 @@ new_l = zip(*l)
 new_l.insert(0, tuple(labeled_input.keys()))
 pprint(new_l)
 
-spamWriter = csv.writer(open('/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv', 'w'))
+spamWriter = csv.writer(open(local_file_path, 'w'))
 
 for row in new_l:
     spamWriter.writerow(row)

@@ -1,13 +1,18 @@
-import os, random, nltk, datetime, pickle
+import random, nltk, datetime, pickle
 from random import randrange
-from csv_read import use
+from csv_read import exe
+from feature_extraction import string_features
 
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
 select_chars = [':', '/', '.', '1', '2', '9']
 
-def prc_slice(list, start, stop):
+def prc_slice(list, stop, start=None):
+    if start is None:
+        _start = 0.0
+    else:
+        _start = start
     size = len(list)
-    return list[int(start*size):int(stop*size)]
+    return list[int(_start*size):int(stop*size)]
 
 def random_date(start, n):
    current = start
@@ -25,12 +30,6 @@ def random_data(n, lat=0.0, lon=0.0):
         # dec_lon = random.random()/100
         # yield hex1.lower(), flt, lon+dec_lon, lat+dec_lat
 
-def string_features(word):
-    ret = {}
-    for char in select_chars:
-        ret['count: {}'.format(char)] = word.count(char)
-    return ret
-
 """
 
 #gen input for training
@@ -46,36 +45,6 @@ for k, v in type_formats.iteritems():
     for val in v:
         for x in k[1](startDate, len_sub / len(val)):
             labeled_input.append((x.strftime(val), k[0]))
-
-# crucial to proper learning
-random.shuffle(labeled_input)
-
-train_data = prc_slice(labeled_input, 0.0, 0.33)
-devtest_data = prc_slice(labeled_input, 0.34, 0.66)
-test_data = prc_slice(labeled_input, 0.67, 1)
-
-# The training set is used to train the model, and the dev-test set is used to perform error analysis. The test set serves in our final evaluation of the system.
-train_set = [(string_features(n), _class) for (n, _class) in train_data]
-devtest_set = [(string_features(n), _class) for (n, _class) in devtest_data]
-# test_set = [(string_features(n), _class) for (n, _class) in test_data]
-
-# file_Name = 'pickled_classifier'
-
-"""
-"""
-classifier = nltk.NaiveBayesClassifier.train(train_set)
-
-# pickle the classifier?
-# open the file for writing
-
-fileObject = open(file_Name,'wb')
-
-# this writes the object a to the
-# file named 'testfile'
-pickle.dump(classifier,fileObject)
-
-# here we close the fileObject
-fileObject.close()
 """
 
 # we open the file for reading
@@ -98,10 +67,8 @@ fileObject.close()
 #     print next_time, classifier.classify(string_features(next_time))
 #     print next_dt, classifier.classify(string_features(next_dt))
 
-input_data = use()
-random.shuffle(input_data)
-test_data = prc_slice(input_data, 0, 0.5)
-devtest_data = prc_slice(input_data, 0.5, 1)
+test_data = exe()
+test_data = prc_slice(test_data, stop=0.20)
 
 test_set = []
 for data, cat in test_data:
@@ -109,12 +76,14 @@ for data, cat in test_data:
     print 'data = {:<20} guess = {:<10} category = {:<20}'.format(data, classifier.classify(feats), cat)
     test_set.append((feats, cat))
 
+print 'Tests conducted:', len(test_set)
+
 print '-' * 100
 print 'Accuracy: {}%'.format(nltk.classify.accuracy(classifier, test_set) * 100)
 print classifier.show_most_informative_features()
 
 errors = []
-for (name, tag) in devtest_data:
+for (name, tag) in test_data:
     guess = classifier.classify(string_features(name))
     if guess != tag:
         errors.append( (tag, guess, name) )
