@@ -9,16 +9,12 @@ def file_read(file_path):
         headers = spamreader.next()
         for row in spamreader:
             test_data.extend(zip(row, headers))
-            print test_data[-1]
             # sys.stdout.write('.')
     return test_data
 
-def exe(file_path=None):
-    if file_path is None:
-        _file_path = local_file_path
-    else:
-        _file_path = file_path
-    return file_read(_file_path)
+def exe_read(file_path):
+    return file_read(file_path)
 
 if __name__ == '__main__':
-    exe()
+    # debugging
+    exe_read(local_file_path)

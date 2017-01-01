@@ -1,6 +1,6 @@
 import random, nltk, datetime, pickle
 from random import randrange
-from csv_read import exe
+from csv_read import exe_read
 from feature_extraction import string_features
 
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
@@ -47,7 +47,7 @@ for k, v in type_formats.iteritems():
             labeled_input.append((x.strftime(val), k[0]))
 """
 
-# we open the file for reading
+# Build classifier
 file_Name = 'pickled_classifier'
 fileObject = open(file_Name,'rb')
 classifier = pickle.load(fileObject)
@@ -67,7 +67,7 @@ fileObject.close()
 #     print next_time, classifier.classify(string_features(next_time))
 #     print next_dt, classifier.classify(string_features(next_dt))
 
-test_data = exe()
+test_data = exe_read('/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv')
 test_data = prc_slice(test_data, stop=0.20)
 
 test_set = []
