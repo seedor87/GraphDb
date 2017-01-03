@@ -9,14 +9,13 @@ class GraphManager(object):
         self.uncommitted = None
         # print self.graph.data("MATCH (a:Person) RETURN a.Name, a.age")
 
-    def create_uncommitted(self):
+    def sync_new(self):
         self.graph.create(self.uncommitted)
-        self.committed.append(self.uncommitted)
-        ret = self.committed.index(self.uncommitted)
+        ret = self._track(self.uncommitted)
         self.uncommitted = None
         return ret
 
-    def add_to_uncommitted(self, subgraph):
+    def add_new(self, subgraph):
         if self.uncommitted is not None: self.uncommitted = self.uncommitted | subgraph
         else: self.uncommitted = subgraph
 
@@ -61,7 +60,7 @@ class GraphManager(object):
                 enter = match[key] if enter is None else enter | match[key]
                 print match[key]
         print enter
-        return enter
+        return self._track(enter)
 
     def upload_subgraph(self, index):
         pass
@@ -75,3 +74,9 @@ class GraphManager(object):
                             for x, y in props.iteritems()])
         if propstr is not "": propstr = ' {'+propstr+'}'
         return propstr
+
+    def _track(self, subgraph):
+        if subgraph in self.committed:
+            return self.committed.index(subgraph)
+        self.committed.append(subgraph)
+        return self.committed.index(subgraph)

@@ -17,10 +17,10 @@ class Console(cmd.Cmd):
         f, other = self._split_path_data(data)
         importer = ImportFactory.get_importer(f)
         if importer is not None:
-            self.manager.add_to_uncommitted(importer.import_file(f, other))
+            self.manager.add_new(importer.import_file(f, other))
 
     def do_create(self, _):
-        self.manager.create_uncommitted()
+        self.manager.sync_new()
 
     def do_print(self, line):
         if line.isdigit(): line = int(line)
@@ -53,7 +53,7 @@ class Console(cmd.Cmd):
             rlabel = n
             elabel, eprops = self._ask_node()
 
-        self.manager.match_node(label, props, rlabel, elabel, eprops)
+        print self.manager.match_node(label, props, rlabel, elabel, eprops)
 
     @staticmethod
     def _ask_node():
