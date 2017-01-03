@@ -1,5 +1,5 @@
 import random, nltk, pickle
-from feature_extraction import string_features
+from feature_extraction import extract_features
 from csv_read import exe_read
 
 default_out_file_name = 'pickled_classifier'
@@ -22,7 +22,7 @@ class classifier_factory():
             # Shuffle data to ensure improved approximation for training
             random.shuffle(input_training_data)
 
-        train_set = [(string_features(n), _class) for (n, _class) in input_training_data]
+        train_set = [(extract_features(n), _class) for (n, _class) in input_training_data]
         classifier = nltk.NaiveBayesClassifier.train(train_set)
         if out_file is None:
             return classifier

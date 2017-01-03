@@ -1,8 +1,9 @@
 
 select_chars = [':', '/', '.', '1', '2', '9']
 
-def string_features(word):
+def extract_features(data):
     ret = {}
     for char in select_chars:
-        ret['count: {}'.format(char)] = word.count(char)
+        ret['count: {}'.format(char)] = data.count(char)
+    ret['len'] = len(data)
     return ret
