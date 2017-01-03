@@ -48,9 +48,9 @@ class Console(cmd.Cmd):
         rlabel = ""
         elabel, eprops = "", {}
 
-        n = raw_input("\nAdd a relationship? > ")
-        if (n == "yes" or n == 'y'):
-            rlabel = raw_input("Enter a relationship label > ")
+        n = raw_input("\nAdd a relationship? Newline to finish.> ")
+        if (n != ""):
+            rlabel = n
             elabel, eprops = self._ask_node()
 
         self.manager.match_node(label, props, rlabel, elabel, eprops)
@@ -58,7 +58,9 @@ class Console(cmd.Cmd):
     @staticmethod
     def _ask_node():
         props = {}
-        label = raw_input("Input label to search with > ")
+        while True:
+            label = raw_input("Input label to search with > ")
+            if label != "": break
 
         key = "init"
         while key is not "":

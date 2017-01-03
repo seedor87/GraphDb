@@ -20,7 +20,7 @@ class GraphManager(object):
         if self.uncommitted is not None: self.uncommitted = self.uncommitted | subgraph
         else: self.uncommitted = subgraph
 
-    def subgraph_exists(self):
+    def subgraph_exists(self, subgraph):
         pass
 
     def retrieve(self, index):
@@ -36,7 +36,7 @@ class GraphManager(object):
         else: self.committed[index] = subgraph
 
     def match_node(self, label, props, rlabel, elabel, eprops):
-        propstr = self._prop_dict_str(props)
+        propstr = self._props_as_str(props)
         label = ':'+label if label else ""
         cipher = "MATCH (m{0}{1})".format(label, propstr)
         cipher2 = " RETURN m"
@@ -46,18 +46,31 @@ class GraphManager(object):
             cipher2+=", r"
 
         if rlabel and elabel:
-            propstr = self._prop_dict_str(eprops)
+            propstr = self._props_as_str(eprops)
             elabel = "" if not elabel else ':'+elabel
             cipher+=("(n{0}{1})".format(elabel, propstr))
             cipher2+=", n"
 
         print cipher+cipher2
-        print self.graph.data(cipher+cipher2)
-        # {u'm': (c91495f:Person {bearing:"100",lat:"100",long:"80",name:"jason bourne",percentmatched:"99"})}
+        data = self.graph.data(cipher+cipher2)
+        # [{u'r': (b1231c4)-[:KNOWS]->(e0bc856), u'm': (b1231c4:Person {bearing:"40",lat:"40",long:"32",name:"bill clark",percentmatched:"40"}), u'n': (e0bc856:Person {bearing:"40",lat:"40",long:"32",name:"bob seedorf",percentmatched:"12"})}]
         # convert string to nodes.
+        enter = None
+        for match in data:
+            for key in match:
+                enter = match[key] if enter is None else enter | match[key]
+                print match[key]
+        print enter
+        return enter
+
+    def upload_subgraph(self, index):
+        pass
+
+    def relate(self, index):
+        pass
 
     @staticmethod
-    def _prop_dict_str(props):
+    def _props_as_str(props):
         propstr = ','.join([x+'=' + (y if y.isdigit() else ('"'+y+'"'))
                             for x, y in props.iteritems()])
         if propstr is not "": propstr = ' {'+propstr+'}'
