@@ -34,14 +34,14 @@ class Console(cmd.Cmd):
             for x in sub.relationships():
                 print x
 
-    def do_set(self, line):
-        if line.isdigit(): line = int(line)
-        else: line = -1
-
-        if self._set_graph_exists():  # save possible changes
-            self.manager.committed[self.subindex] = self.subgraph
-        self.subgraph = self.manager.retrieve(line)
-        self.subindex = line
+    # def do_set(self, line):
+    #     if line.isdigit(): line = int(line)
+    #     else: line = -1
+    #
+    #     if self._set_graph_exists():  # save possible changes
+    #         self.manager.committed[self.subindex] = self.subgraph
+    #     self.subgraph = self.manager.retrieve(line)
+    #     self.subindex = line
 
     def do_find(self, _):
         label, props = self._ask_node()

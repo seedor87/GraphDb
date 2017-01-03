@@ -29,10 +29,10 @@ class GraphManager(object):
             return self.uncommitted
         else: return self.committed[index]
 
-    def replace(self, subgraph, index):
-        if index < 0 or index >= len(self.committed):
-            self.uncommitted = subgraph
-        else: self.committed[index] = subgraph
+    # def replace(self, subgraph, index):
+    #     if index < 0 or index >= len(self.committed):
+    #         self.uncommitted = subgraph
+    #     else: self.committed[index] = subgraph
 
     def match_node(self, label, props, rlabel, elabel, eprops):
         propstr = self._props_as_str(props)
