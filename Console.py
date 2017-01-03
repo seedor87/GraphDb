@@ -55,6 +55,12 @@ class Console(cmd.Cmd):
 
         print self.manager.match_node(label, props, rlabel, elabel, eprops)
 
+    def do_relate(self, line):
+        pass
+
+    def do_upload(self, line):
+        pass
+
     @staticmethod
     def _ask_node():
         props = {}
