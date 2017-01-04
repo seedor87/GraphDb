@@ -10,15 +10,6 @@ def prc_slice(list, stop, start=None):
     size = len(list)
     return list[int(_start*size):int(stop*size)]
 
-def random_data(n, lat=0.0, lon=0.0):
-    for _ in xrange(n):
-        hex1 = '%012x' % random.randrange(16**12) # 12 char random string
-        flt = float(random.randint(0,100))
-        yield flt
-        # dec_lat = random.random()/100
-        # dec_lon = random.random()/100
-        # yield hex1.lower(), flt, lon+dec_lon, lat+dec_lat
-
 class classification_module():
 
     def __init__(self):
@@ -65,8 +56,9 @@ class classification_module():
     def run(self, file_path, dev=None):
         # demo usage
         self.read_classifier('pickled_classifier')
-        self.read_test_data(file_path)
+        self.read_test_data(file_path, stop=0.3)
         if dev:
+            random.shuffle(self.test_data)
             self.build_test_set()
             self.dev_testing() # dev testing - all the work to do
             print 'Tests conducted:{}'.format(len(self.test_set))
@@ -80,19 +72,3 @@ if __name__ == '__main__':
     cm = classification_module()
     file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
     cm.run(file_path, dev=1)
-
-"""
-#gen input for training
-type_formats = {('date', random_date): ["%m/%d/%Y", "%Y-%d-%m", "%d.%m.%Y"],
-                ('time', random_date): ["%H:%M:%S", "%H:%M"],
-                ('date_time', random_date): ["%d/%m/%Y %H:%M:%S"]}
-                # ('float', random_data): []
-
-size = 10000
-labeled_input = []
-for k, v in type_formats.iteritems():
-    len_sub = size / len(type_formats)
-    for val in v:
-        for x in k[1](startDate, len_sub / len(val)):
-            labeled_input.append((x.strftime(val), k[0]))
-"""

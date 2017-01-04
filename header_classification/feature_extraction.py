@@ -1,5 +1,7 @@
 
-select_chars = [':', '/', '.', '1', '2', '9']
+import string
+
+select_chars = [':', '/', '.', '1', '2', '9', '0']
 
 def extract_features(data):
     ret = {}
