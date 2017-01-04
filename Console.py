@@ -56,10 +56,16 @@ class Console(cmd.Cmd):
         print self.manager.match_node(label, props, rlabel, elabel, eprops)
 
     def do_relate(self, line):
-        pass
+        if line.isdigit():
+            self.manager.relate(int(line))
+        else:
+            print "Not an index."
 
     def do_upload(self, line):
-        pass
+        if line.isdigit():
+            self.manager.upload_subgraph(int(line))
+        else:
+            print "Not an index."
 
     @staticmethod
     def _ask_node():

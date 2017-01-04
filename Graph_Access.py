@@ -63,14 +63,15 @@ class GraphManager(object):
         return self._track(enter)
 
     def upload_subgraph(self, index):
-        pass
+        self.graph.push(self.committed[index])
 
     def relate(self, index):
-        pass
+        for node in self.committed[index].nodes():
+            node['test'] = 'test'
 
     @staticmethod
     def _props_as_str(props):
-        propstr = ','.join([x+'=' + (y if y.isdigit() else ('"'+y+'"'))
+        propstr = ','.join([x+':' + (y if y.isdigit() else ('"'+y+'"'))
                             for x, y in props.iteritems()])
         if propstr is not "": propstr = ' {'+propstr+'}'
         return propstr
