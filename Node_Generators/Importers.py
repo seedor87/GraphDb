@@ -4,6 +4,12 @@ from os.path import isfile
 
 
 class Importer(object):
+    """
+    `Author`: Bill Clark
+
+    The interface for an importer. An importer is an object that
+    can import files of a given type.
+    """
 
     def __init__(self):
         pass
@@ -15,7 +21,18 @@ class Importer(object):
 class CsvImporter(Importer):
 
     def import_file(self, pathname, lblkey=None):
-        """Path will have csv removed prior."""
+        """
+        `Author`: Bill Clark
+
+
+
+        `pathname`: The path of the file to import.
+
+        `lblkey`: The optional argument to be used to get the
+         from the table.
+
+        `return`: The subgraph made from the file data.
+        """
         ret = None
         builder = Neo_Conversion.NodeBuilder()
         try:
@@ -44,13 +61,25 @@ class CsvImporter(Importer):
 
 
 class ImportFactory(object):
+    """
+    `Author`: Bill Clark
+
+    A factory object that makes importers based of the file type.
+    """
 
     def __init__(self):
         pass
 
     @staticmethod
     def get_importer(f):
-        """Returns a object that can import the file provided or none if nothing can."""
+        """
+        `Author`: Bill Clark
+
+        Returns a object that can import the file provided or
+        none if nothing can.
+
+        `f`: The file you're trying to import.
+        """
         if not isfile(f):
             print "ERROR: That file doesn't exist."
             return None
