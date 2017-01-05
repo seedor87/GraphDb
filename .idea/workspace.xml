@@ -2,27 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cccaef78-de8f-4775-8d11-fd4482fe2f6f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/.idea/inspectionProfiles/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/Implementation_test.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/api.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/auth.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/binder.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/cache.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/cursor.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/error.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/models.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/parsers.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/streaming.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Tweepy-Implementation/tweepy/utils.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Tweepy-Implementation/Implementation_test.py" afterPath="$PROJECT_DIR$/Tweepy-Implementation/Implementation_test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -53,9 +33,11 @@
       <file leaf-file-name="Implementation_test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Tweepy-Implementation/Implementation_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="56" column="33" lean-forward="true" selection-start-line="56" selection-start-column="33" selection-end-line="56" selection-end-column="33" />
-              <folding />
+            <state relative-caret-position="480">
+              <caret line="60" column="0" lean-forward="true" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+              <folding>
+                <element signature="e#130#143#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -392,7 +374,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="7" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -435,9 +417,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Tweepy-Implementation/Implementation_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="56" column="33" lean-forward="true" selection-start-line="56" selection-start-column="33" selection-end-line="56" selection-end-column="33" />
-          <folding />
+        <state relative-caret-position="480">
+          <caret line="60" column="0" lean-forward="true" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+          <folding>
+            <element signature="e#130#143#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
