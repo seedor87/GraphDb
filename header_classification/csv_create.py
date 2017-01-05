@@ -24,7 +24,7 @@ def random_data(n):
         # dec_lon = random.random()
         yield hex.lower(), flt
 
-type_formats = {'date': ["%m/%d/%Y", "%Y-%d-%m", "%d.%m.%Y"],
+type_formats = {'date': ["%m/%d/%Y"],
                 'time': ["%H:%M:%S", "%H:%M"],
                 'date_time': ["%d/%m/%Y %H:%M:%S"]
                 }
