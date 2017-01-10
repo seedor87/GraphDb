@@ -1,4 +1,4 @@
-import csv, datetime
+import csv, datetime, os
 import random
 from pprint import pprint
 
@@ -6,7 +6,7 @@ from pprint import pprint
 Short script used to generate test data for the csv reading, classification building and classifier usage testing
 """
 
-local_file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
+local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
 startDate = datetime.datetime(1970, 9, 20, 13, 00)
 
 def random_date(start, n):
