@@ -1,6 +1,7 @@
 import csv, datetime, os
 import random
 from pprint import pprint
+from faker import Faker
 
 """
 Short script used to generate test data for the csv reading, classification building and classifier usage testing
@@ -24,36 +25,86 @@ def random_data(n):
         # dec_lon = random.random()
         yield hex.lower(), flt
 
-type_formats = {'date': ["%m/%d/%Y"],
-                'time': ["%H:%M:%S", "%H:%M"],
-                'date_time': ["%d/%m/%Y %H:%M:%S"]
-                }
+def main():
 
-size = 10000
-labeled_input = {}
+    type_formats = {'date': ["%m/%d/%Y"],
+                    'time': ["%H:%M:%S", "%H:%M"],
+                    'date_time': ["%d/%m/%Y %H:%M:%S"]
+                    }
 
-for k, v in type_formats.iteritems():
-    labeled_input[k] = []
-    for val in v:
-        for x in random_date(startDate, size):
-            labeled_input[k].append(x.strftime(val))
+    size = 10000
+    labeled_input = {}
 
-headers = ['hex', 'float']
-for h in headers:
-    labeled_input[h] = []
-for elems in random_data(size):
-    paired = zip(headers, elems)
-    for pair in paired:
-        labeled_input[pair[0]].append(pair[1])
+    for k, v in type_formats.iteritems():
+        labeled_input[k] = []
+        for val in v:
+            for x in random_date(startDate, size):
+                labeled_input[k].append(x.strftime(val))
 
-l = []
-for k, v in labeled_input.iteritems():
-    l.append(v)
-new_l = zip(*l)
-new_l.insert(0, tuple(labeled_input.keys()))
-pprint(new_l)
+    headers = ['hex', 'float']
+    for h in headers:
+        labeled_input[h] = []
+    for elems in random_data(size):
+        paired = zip(headers, elems)
+        for pair in paired:
+            labeled_input[pair[0]].append(pair[1])
 
-spamWriter = csv.writer(open(local_file_path, 'w'))
+    l = []
+    for k, v in labeled_input.iteritems():
+        l.append(v)
+    new_l = zip(*l)
+    new_l.insert(0, tuple(labeled_input.keys()))
+    pprint(new_l)
 
-for row in new_l:
-    spamWriter.writerow(row)
+    spamWriter = csv.writer(open(local_file_path, 'w'))
+
+    for row in new_l:
+        spamWriter.writerow(row)
+
+from faker.providers import BaseProvider
+
+# create new provider class
+
+
+if __name__ == '__main__':
+
+    # Load the faker and its providers
+    faker  = Faker()
+
+    class MyProvider(BaseProvider):
+
+        def balance(self):
+            return faker.pydecimal(left_digits=4, right_digits=2, positive=False)
+
+        def units(self):
+            return faker.currency_code()
+
+        def lat_lon(self):
+            return random.uniform(-180, 180)
+
+    # then add new provider to faker instance
+    faker.add_provider(MyProvider)
+
+    def test(target, lim):
+
+        # stuff = ["name", "email", 'phone_number', "ssn", 'job'] # Person
+        # stuff = ['profile'] # lengthy person profile
+        # stuff = ["company", 'company_suffix', 'catch_phrase', 'bs'] # company
+        # stuff = ['date_time_this_century', 'date'] # time date and date time
+        # stuff = ['file_name'] # rand file
+        # stuff = ['image_url', 'ipv4', 'ipv6', 'domain_name', 'url', 'company_email']
+        # stuff = ['pytuple'] # garbage day
+        stuff = ['balance', 'units', 'lat_lon'] # demo MyProvider
+
+        with open(target, 'w') as o:
+            writer = csv.writer(o)
+            it = getattr(faker, stuff[0])()
+            writer.writerow(it.keys()) if isinstance(it, dict) else writer.writerow(stuff)
+            for row in range(lim):
+                row = []
+                for item in stuff:
+                    it = getattr(faker, item)()
+                    row.append(it.values()) if isinstance(it, dict) else row.append(it)
+                writer.writerow(row)
+
+    test('input.csv', 10)

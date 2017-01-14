@@ -2,20 +2,18 @@ import nltk, os, sys
 from csv_read import exe_read
 from feature_extraction import extract_features
 
-def prc_slice(list, start=0.0, stop=1.0):
-    """
-    This method is used to obtain the slicing of a list using floating point values.
-    The start and stop parameters are used to specify the relative percentage of the list to be  sliced.
-    Start of 0.0 and stop of 0.25 means return the first 25% of the list. Start of 0.5 and stop of 0.55 means return the 5% of the list following the first half (50%) of the list.
-    And start 0.0 and stop of 1.0 means return the entire (100%) of the list.
+"""
+This lambda is used to obtain the slicing of a list using floating point values.
+The start and stop parameters are used to specify the relative percentage of the list to be  sliced.
+Start of 0.0 and stop of 0.25 means return the first 25% of the list. Start of 0.5 and stop of 0.55 means return the 5% of the list following the first half (50%) of the list.
+And start 0.0 and stop of 1.0 means return the entire (100%) of the list.
 
-    `param list`: list to be sliced
-    `param start`: the starting percentage of list slice
-    `param stop`: the ending percentage of list slice
-    `return`: the list slicing.
-    """
-    size = len(list)
-    return list[int(start*size):int(stop*size)]
+`param list`: list to be sliced
+`param start`: the starting percentage of list slice
+`param stop`: the ending percentage of list slice
+`return`: the list slicing.
+"""
+prc_slice = lambda list, start=0.0, stop=1.0: list[int(start*len(list)):int(stop*len(list))]
 
 class classification_module():
     """
@@ -42,9 +40,8 @@ class classification_module():
         `param file_name`: the path to the file that holds the pickled classifier
         """
         import pickle
-        fileObject = open(file_name,'rb')
-        self.classifier = pickle.load(fileObject)
-        fileObject.close()
+        with open(file_name,'rb') as fileObject:
+            self.classifier = pickle.load(fileObject)
 
     def read_test_data(self, file_path, shuffle=False, start=0.0, stop=1.0):
         """
