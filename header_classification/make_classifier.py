@@ -52,5 +52,5 @@ class classifier_factory():
 
 if __name__ == '__main__':
     """Execute Script"""
-    factory = classifier_factory('/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv')
+    factory = classifier_factory('C:\\Users\\Bob S\\PycharmProjects\\GraphDb\\csv\\input.csv')
     factory.make_classifier(out_file=default_out_file_name)

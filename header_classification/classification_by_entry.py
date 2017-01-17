@@ -1,21 +1,19 @@
-import nltk
+import nltk, os, sys
 from csv_read import exe_read
 from feature_extraction import extract_features
 
-def prc_slice(list, start=0.0, stop=1.0):
-    """
-    This method is used to obtain the slicing of a list using floating point values.
-    The start and stop parameters are used to specify the relative percentage of the list to be  sliced.
-    Start of 0.0 and stop of 0.25 means return the first 25% of the list. Start of 0.5 and stop of 0.55 means return the 5% of the list following the first half (50%) of the list.
-    And start 0.0 and stop of 1.0 means return the entire (100%) of the list.
+"""
+This lambda is used to obtain the slicing of a list using floating point values.
+The start and stop parameters are used to specify the relative percentage of the list to be  sliced.
+Start of 0.0 and stop of 0.25 means return the first 25% of the list. Start of 0.5 and stop of 0.55 means return the 5% of the list following the first half (50%) of the list.
+And start 0.0 and stop of 1.0 means return the entire (100%) of the list.
 
-    `param list`: list to be sliced
-    `param start`: the starting percentage of list slice
-    `param stop`: the ending percentage of list slice
-    `return`: the list slicing.
-    """
-    size = len(list)
-    return list[int(start*size):int(stop*size)]
+`param list`: list to be sliced
+`param start`: the starting percentage of list slice
+`param stop`: the ending percentage of list slice
+`return`: the list slicing.
+"""
+prc_slice = lambda list, start=0.0, stop=1.0: list[int(start*len(list)):int(stop*len(list))]
 
 class classification_module():
     """
@@ -33,7 +31,7 @@ class classification_module():
         self.test_data = None
         self.test_set = None
 
-    def read_classifier(self, file_name='pickled_classifier'):
+    def instantiate_classifier(self, file_name='pickled_classifier'):
         """
         This method is used only for reading the classifier to be used for task.
         Uses python's serialization suite, pickle
@@ -42,9 +40,8 @@ class classification_module():
         `param file_name`: the path to the file that holds the pickled classifier
         """
         import pickle
-        fileObject = open(file_name,'rb')
-        self.classifier = pickle.load(fileObject)
-        fileObject.close()
+        with open(file_name,'rb') as fileObject:
+            self.classifier = pickle.load(fileObject)
 
     def read_test_data(self, file_path, shuffle=False, start=0.0, stop=1.0):
         """
@@ -60,15 +57,15 @@ class classification_module():
         test_data = exe_read(file_path, shuffle=shuffle)
         self.test_data = prc_slice(test_data, stop=stop, start=start)
 
-    def classify(self, *strings):
+    def classify(self, *entries):
         """
         This generator applies the constructed composite object, self.classifier, to yield determined classification.
 
         `param strings`: the 0 or more strings to be classified
         `yield`: the classification of the associated string.
         """
-        for str in strings:
-            yield self.classifier.classify(extract_features(str))
+        for entry in entries:
+            yield self.classifier.classify(extract_features(entry))
 
     def dev_testing(self):
         """
@@ -110,7 +107,7 @@ class classification_module():
         `param dev`: optional, switch for dev_testing
         """
         # demo usage
-        self.read_classifier()
+        self.instantiate_classifier()
         self.read_test_data(file_path, shuffle=1,stop=0.1)
         if dev:
             num_errors = self.dev_testing() # dev testing - all the work to do
@@ -124,5 +121,13 @@ class classification_module():
 if __name__ == '__main__':
     # main for execution, for usage see the workings of run method
     cm = classification_module()
-    file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
-    cm.run(file_path, dev=1)
+    file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
+    try:
+        demo = sys.argv[1]
+        cm.instantiate_classifier()
+        entries = ['words', '07/08/94', '12:12:00']
+        cl = cm.classify(*entries)
+        for elem in entries:
+            print elem, next(cl)
+    except Exception as e:
+        cm.run(file_path, dev=1)
