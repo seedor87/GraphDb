@@ -1,6 +1,7 @@
 import csv, random
 
-local_file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
+# local_file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
+local_file_path = 'C:/Users/Research/PycharmProjects/GraphDb/csv/input.csv'
 
 def file_read(file_path):
     test_data = []

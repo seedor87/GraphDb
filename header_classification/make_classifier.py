@@ -32,5 +32,6 @@ class classifier_factory():
         print 'Classifier Created Successfully. Pickled in file:', out_file
 
 if __name__ == '__main__':
-    factory = classifier_factory('/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv')
+    # factory = classifier_factory('/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv')
+    factory = classifier_factory('C:/Users/Research/PycharmProjects/GraphDb/csv/input.csv')
     factory.make_classifier(out_file=default_out_file_name)

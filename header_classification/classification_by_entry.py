@@ -70,5 +70,6 @@ class classification_module():
 
 if __name__ == '__main__':
     cm = classification_module()
-    file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
+    # file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
+    file_path = 'C:/Users/Research/PycharmProjects/GraphDb/csv/input.csv'
     cm.run(file_path, dev=1)
