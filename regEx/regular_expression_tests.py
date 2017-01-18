@@ -17,20 +17,21 @@ cipher_text_longitude = cipher_suite.encrypt(b"(\+|\-)?(\d{2}\.\d+.(E|W))")
 cipher_text_email = cipher_suite.encrypt(b".+@.+\.\w+")
 
 time = r"(([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)(AM|PM)?" #regex for time, date, and latitude
-date = r"((0\d|1[0-2])/([0-2]\d|3[0-1])/(\d{2}|\d{4}))"
-date_time = r"((0\d|1[0-2])/([0-2]\d|3[0-1])/(\d{2}|\d{4})) (([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)(AM|PM)?"
+date = r"((0\d|1[0-2])/([0-2]\d|3[0-1])/(\d{2}|\d{4})|([0-2]\d|3[0-1])/(0\d|1[0-2])/(\d{2}|\d{4}))"
+date_time = r"((0\d|1[0-2])/([0-2]\d|3[0-1])/(\d{2}|\d{4})|" \
+            r"([0-2]\d|3[0-1])/(0\d|1[0-2])/(\d{2}|\d{4})) (([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)(AM|PM)?"
 latitude = r"(\+|\-)?(\d{2}\.\d+(N|S))"
 longitude = r"(\+|\-)?(([0-8\d|90|1[0-7]\d|180)\.\d+(E|W))"
 email = r".+@.+\.\w+"
 phone = r"(\()?\d{3}(\))?( )?\d{3}(-)?\d{4}(\d{4})?"
 
-if re.search(time, "09:54:00PM"):
+if re.search(time, "09:59:00PM"):
     print ("time OK")
 
-if re.search(date, "02/31/90"):
+if re.search(date, "01/30/2015"):
     print("date OK")
 
-if re.search(date_time, "02/07/2006 10:40:43"):
+if re.search(date_time, "30/01/2013 00:28:56"):
     print("date_time OK")
 
 if re.search(latitude, "+54.9864N"):
