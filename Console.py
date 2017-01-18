@@ -130,9 +130,8 @@ class Console(cmd.Cmd):
         `return`: The label and props dictionary.
         """
         props = {}
-        while True:
-            label = raw_input("Input label to search with > ")
-            if label != "": break
+        label = raw_input("Input label to search with > ")
+
 
         key = "init"
         while key is not "":
