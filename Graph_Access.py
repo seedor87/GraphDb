@@ -1,5 +1,6 @@
 from py2neo import Graph
-
+from py2neo import Relationship
+from py2neo import Walkable
 
 class GraphManager(object):
     """
@@ -131,7 +132,7 @@ class GraphManager(object):
             for key in match:
                 enter = match[key] if enter is None else enter | match[key]
                 print match[key]
-        print enter
+        #print enter
         return self._track(enter)
 
     def upload_subgraph(self, index):
@@ -155,8 +156,19 @@ class GraphManager(object):
 
         `index`: Index of the subgraph to relate nodes.
         """
+        relations = None
+        prior = list(self.committed[index].relationships())
         for node in self.committed[index].nodes():
-            node['test'] = 'test'
+            for comp in self.committed[index].nodes():
+                if node == comp or Relationship(comp, node) in prior:
+                    continue
+                for key in node:
+                    if key in comp and node[key] == comp[key]:
+                        r = Relationship(node, "="+key, comp)
+                        relations = r if relations is None else relations | r
+                        prior.append(r)
+                        break
+        self.add_new(relations)
 
     @staticmethod
     def _props_as_str(props):

@@ -42,7 +42,7 @@ class Console(cmd.Cmd):
         Runs synchronize on the uncommitted nodes. This creates the
          nodes created locally on the server.
         """
-        self.manager.sync_new()
+        print self.manager.sync_new()
 
     def do_print(self, line):
         """
