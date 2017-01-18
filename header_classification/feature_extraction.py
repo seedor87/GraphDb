@@ -1,5 +1,5 @@
 
-import string
+import string, re
 
 """
 This file is used to fulfill the requirements of automated pattern recognition throughout.
@@ -16,11 +16,15 @@ During this process, the new classifier is written to the pickled classifier fil
 From there, further testing by application of the dev test suite in the classification by entry module maybe conducted.
 
 """
-select_chars = [':', '/', '.', '1', '2', '9', '0']
+select_chars = ['..\:..\:..', '..\/..\/[2-4]\d']
 
 def extract_features(data):
     ret = {}
-    for char in select_chars:
-        ret['count: {}'.format(char)] = data.count(char)
+    for pattern in select_chars:
+        compile = re.compile(pattern)
+        if compile.match(data):
+            ret['entry match at: {}'.format(pattern)] = 1
+        else:
+            ret['entry match at: {}'.format(pattern)] = 0
     ret['len'] = len(data)
     return ret

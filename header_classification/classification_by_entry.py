@@ -125,7 +125,7 @@ if __name__ == '__main__':
     try:
         demo = sys.argv[1]
         cm.instantiate_classifier()
-        entries = ['words', '07/08/94', '12:12:00']
+        entries = ['0xFFF', '07/08/1994', '07/08/14', '12:12:00']
         cl = cm.classify(*entries)
         for elem in entries:
             print elem, next(cl)

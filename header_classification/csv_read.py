@@ -10,9 +10,9 @@ def file_read(file_path):
     """
     test_data = []
     with open(file_path, 'rb') as csvfile:
-        spamreader = csv.reader(csvfile)
-        headers = spamreader.next()
-        for row in spamreader:
+        reader = csv.reader(csvfile)
+        headers = reader.next()
+        for row in reader:
             test_data.extend(zip(row, headers))
     return test_data
 
