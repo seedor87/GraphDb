@@ -45,9 +45,8 @@ class classifier_factory():
         classifier = nltk.NaiveBayesClassifier.train(train_set)
         if out_file is None:
             return classifier
-        fileObject = open(out_file, 'wb')
-        pickle.dump(classifier,fileObject)
-        fileObject.close()
+        with open(out_file, 'wb') as fileObject:
+            pickle.dump(classifier,fileObject)
         print 'Classifier Created Successfully. Pickled in file:', out_file
 
 if __name__ == '__main__':
