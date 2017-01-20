@@ -68,43 +68,46 @@ from faker.providers import BaseProvider
 
 if __name__ == '__main__':
 
-    # Load the faker and its providers
-    faker  = Faker()
+    main()
 
-    class MyProvider(BaseProvider):
-
-        def balance(self):
-            return faker.pydecimal(left_digits=4, right_digits=2, positive=False)
-
-        def units(self):
-            return faker.currency_code()
-
-        def lat_lon(self):
-            return random.uniform(-180, 180)
-
-    # then add new provider to faker instance
-    faker.add_provider(MyProvider)
-
-    def test(target, lim):
-
-        # stuff = ["name", "email", 'phone_number', "ssn", 'job'] # Person
-        # stuff = ['profile'] # lengthy person profile
-        # stuff = ["company", 'company_suffix', 'catch_phrase', 'bs'] # company
-        # stuff = ['date_time_this_century', 'date'] # time date and date time
-        # stuff = ['file_name'] # rand file
-        # stuff = ['image_url', 'ipv4', 'ipv6', 'domain_name', 'url', 'company_email']
-        # stuff = ['pytuple'] # garbage day
-        stuff = ['balance', 'units', 'lat_lon'] # demo MyProvider
-
-        with open(target, 'w') as o:
-            writer = csv.writer(o)
-            it = getattr(faker, stuff[0])()
-            writer.writerow(it.keys()) if isinstance(it, dict) else writer.writerow(stuff)
-            for row in range(lim):
-                row = []
-                for item in stuff:
-                    it = getattr(faker, item)()
-                    row.append(it.values()) if isinstance(it, dict) else row.append(it)
-                writer.writerow(row)
-
-    test('input.csv', 10)
+    #
+    # # Load the faker and its providers
+    # faker  = Faker()
+    #
+    # class MyProvider(BaseProvider):
+    #
+    #     def balance(self):
+    #         return faker.pydecimal(left_digits=4, right_digits=2, positive=False)
+    #
+    #     def units(self):
+    #         return faker.currency_code()
+    #
+    #     def lat_lon(self):
+    #         return random.uniform(-180, 180)
+    #
+    # # then add new provider to faker instance
+    # faker.add_provider(MyProvider)
+    #
+    # def test(target, lim):
+    #
+    #     # stuff = ["name", "email", 'phone_number', "ssn", 'job'] # Person
+    #     # stuff = ['profile'] # lengthy person profile
+    #     # stuff = ["company", 'company_suffix', 'catch_phrase', 'bs'] # company
+    #     # stuff = ['date_time_this_century', 'date'] # time date and date time
+    #     # stuff = ['file_name'] # rand file
+    #     # stuff = ['image_url', 'ipv4', 'ipv6', 'domain_name', 'url', 'company_email']
+    #     # stuff = ['pytuple'] # garbage day
+    #     stuff = ['balance', 'units', 'lat_lon'] # demo MyProvider
+    #
+    #     with open(target, 'w') as o:
+    #         writer = csv.writer(o)
+    #         it = getattr(faker, stuff[0])()
+    #         writer.writerow(it.keys()) if isinstance(it, dict) else writer.writerow(stuff)
+    #         for row in range(lim):
+    #             row = []
+    #             for item in stuff:
+    #                 it = getattr(faker, item)()
+    #                 row.append(it.values()) if isinstance(it, dict) else row.append(it)
+    #             writer.writerow(row)
+    #
+    # test('input.csv', 10)
