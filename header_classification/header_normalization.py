@@ -1,7 +1,6 @@
-import os
-import csv
+import os, csv, random, operator
 from collections import defaultdict
-from classification_by_entry import classification_module
+from classification_by_entry import classification_module, prc_slice
 
 local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
 cm = classification_module()
@@ -12,12 +11,18 @@ def has_header(file):
     file.seek(0)
     return temp
 
-def determine_header(entries):
+def determine_header(entries, shuffle=None, stop=0.1):
     """
     TODO
     improve the classification algorithm to be as accurate as possible
     """
-    return next(cm.classify(entries[0]))
+    categories = defaultdict(int)
+    if shuffle:
+        random.shuffle(entries)
+    _entries = prc_slice(entries, start=0.0, stop=stop)
+    for classification in cm.classify(*_entries):
+        categories[classification] += 1
+    return max(categories.iteritems(), key=operator.itemgetter(1))[0]
 
 columns = defaultdict(list)
 with open(local_file_path, 'rb') as in_file:
@@ -25,7 +30,7 @@ with open(local_file_path, 'rb') as in_file:
 
     switch = has_header(in_file)
     if switch:
-        next(reader)
+        next(reader)    # skip the row that is headers
     hold_over = []
     for row in reader:
         hold_over.append(row)
