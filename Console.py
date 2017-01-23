@@ -132,7 +132,6 @@ class Console(cmd.Cmd):
         props = {}
         label = raw_input("Input label to search with > ")
 
-
         key = "init"
         while key is not "":
             key = raw_input("Input property key to search with, newline to finish > ")
