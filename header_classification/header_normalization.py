@@ -6,21 +6,14 @@ local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(_
 cm = classification_module()
 cm.instantiate_classifier()
 
-def has_header(file_path):
+def determine_header(entries, shuffle=False, stop=0.1):
     """
-    TODO Fix this method it is in error now
+    This method is used to encapsulate the ability to categorically decide what classification is used to make the header of the csv
+    By redundantly applying the classification technique of the classification_module we can decide what class to write in as a header for the output csv
 
-    :param file_path:
-    :return:
-    """
-    with open(file_path, 'rb') as file:
-        temp = csv.Sniffer().has_header(file.readline())
-        file.seek(0)
-    return temp
-
-def determine_header(entries, shuffle=None, stop=0.1):
-    """
-
+    `entries:` the list of entries of a given csv column to be classified
+    `shuffle:` the optional parameter to randomize data for improved classification
+    `stop`: default value is 10%, the point at which we stop parsing the entries to save runtime cycles
     """
     categories = defaultdict(int)
     if shuffle:
@@ -31,15 +24,24 @@ def determine_header(entries, shuffle=None, stop=0.1):
     return max(categories.iteritems(), key=operator.itemgetter(1))[0]
 
 def main(in_file_path, out_file_path=None, delimiter=','):
+    """
+    
+    :param in_file_path:
+    :param out_file_path:
+    :param delimiter:
+    :return:
+    """
 
     _out_file_path = in_file_path if out_file_path is None else out_file_path
 
     columns = defaultdict(list)
-    switch = has_header(in_file_path)
+
     with open(in_file_path, 'rb') as in_file:
         reader = csv.reader(in_file, delimiter=delimiter)
 
         # skip the row that is headers
+        switch = csv.Sniffer().has_header(in_file.read(1024))
+        in_file.seek(0)
         if switch:
             next(reader)
 
