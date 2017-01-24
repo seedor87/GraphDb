@@ -2,6 +2,7 @@ import csv, datetime, os
 import random
 from pprint import pprint
 from faker import Faker
+from faker.providers import BaseProvider
 
 """
 Short script used to generate test data for the csv reading, classification building and classifier usage testing
@@ -56,15 +57,10 @@ def main():
     new_l.insert(0, tuple(labeled_input.keys()))
     pprint(new_l)
 
-    spamWriter = csv.writer(open(local_file_path, 'w'))
+    spamWriter = csv.writer(open(local_file_path, 'wb'))
 
     for row in new_l:
         spamWriter.writerow(row)
-
-from faker.providers import BaseProvider
-
-# create new provider class
-
 
 if __name__ == '__main__':
 
