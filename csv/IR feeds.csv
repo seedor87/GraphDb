@@ -1,5 +1,5 @@
-Name,Lat,Long,PercentMatched,Bearing
-Bob Seedorf,40,32,12
-Bill Clark,40,32,40
+name,lat,long,percentmatched,bearing
+Bob Seedorf,40,32,12,South
+Bill Clark,40,32,40,East
 Nicki,100,80,88,North
-Jason Bourne,100,80,99
+Jason Bourne,100,80,99,Northeast

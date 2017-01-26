@@ -42,7 +42,7 @@ class Console(cmd.Cmd):
         Runs synchronize on the uncommitted nodes. This creates the
          nodes created locally on the server.
         """
-        self.manager.sync_new()
+        print self.manager.sync_new()
 
     def do_print(self, line):
         """
@@ -130,9 +130,7 @@ class Console(cmd.Cmd):
         `return`: The label and props dictionary.
         """
         props = {}
-        while True:
-            label = raw_input("Input label to search with > ")
-            if label != "": break
+        label = raw_input("Input label to search with > ")
 
         key = "init"
         while key is not "":
