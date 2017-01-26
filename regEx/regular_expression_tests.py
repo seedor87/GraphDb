@@ -25,7 +25,8 @@ longitude = r"(\+|\-)?(([0-8\d|90|1[0-7]\d|180)\.\d+(E|W))"
 email = r".+@.+\.\w+"
 phone = r"(\()?\d{3}(\))?( )?\d{3}(-)?\d{4}(\d{4})?"
 
-if re.search(time, "09:59:00PM"):
+#Testing with Time
+if re.search(time, "09:59:00 PM"):
     print ("time OK")
 
 if re.search(date, "01/30/2015"):
