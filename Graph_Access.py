@@ -164,7 +164,7 @@ class GraphManager(object):
                     continue
                 for key in node:
                     if key in comp and node[key] == comp[key]:
-                        r = Relationship(node, "="+key, comp)
+                        r = Relationship(node, key, comp)
                         relations = r if relations is None else relations | r
                         prior.append(r)
                         break
