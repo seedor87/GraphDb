@@ -1,8 +1,10 @@
-import random, nltk, pickle
+import random, nltk, pickle, os
 from feature_extraction import extract_features
 from csv_read import exe_read
 
-default_out_file_name = 'pickled_classifier'
+pickled_classifier_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources', 'pickled_classifier')
+local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
+
 
 class classifier_factory():
     """
@@ -51,5 +53,5 @@ class classifier_factory():
 
 if __name__ == '__main__':
     """Execute Script"""
-    factory = classifier_factory('C:\\Users\\Bob S\\PycharmProjects\\GraphDb\\csv\\input.csv')
-    factory.make_classifier(out_file=default_out_file_name)
+    factory = classifier_factory(local_file_path)
+    factory.make_classifier(out_file=pickled_classifier_path)

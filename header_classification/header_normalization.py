@@ -1,6 +1,6 @@
 import sys, os, csv, random, operator
 from collections import defaultdict
-from classification_by_entry import classification_module, prc_slice
+from classification_module import classification_module, prc_slice
 
 local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
 

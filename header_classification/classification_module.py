@@ -1,6 +1,10 @@
-import nltk, os, sys
+import os, sys
 from csv_read import exe_read
 from feature_extraction import extract_features
+
+# local file used in all testing and training
+pickled_classifier_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources', 'pickled_classifier')
+local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
 
 """
 This lambda is used to obtain the slicing of a list using floating point values.
@@ -31,13 +35,13 @@ class classification_module():
         self.test_data = None
         self.test_set = None
 
-    def instantiate_classifier(self, file_name='pickled_classifier'):
+    def instantiate_classifier(self, file_name=pickled_classifier_path):
         """
         This method is used only for reading the classifier to be used for task.
         Uses python's serialization suite, pickle
         Default value of param file_name is local reference predisposed by the make_classifier module.
 
-        `param file_name`: the path to the file that holds the pickled classifier
+        `file_name`: the path to the file that holds the pickled classifier
         """
         import pickle
         with open(file_name,'rb') as fileObject:
@@ -47,13 +51,11 @@ class classification_module():
         """
         This method is used to read in the csv data to be used during employment.
 
-        `param file_path`: path to file to with csv data to be read in
-        `param shuffle`: optional, switch to random.shuffle data
-        `param start`: start index to be passed to prc_slice
-        `param stop`: stop index to be passed to prc_slice
+        `file_path`: path to file to with csv data to be read in
+        `shuffle`: optional, switch to random.shuffle data
+        `start`: start index to be passed to prc_slice
+        `stop`: stop index to be passed to prc_slice
         """
-
-        # file_path = '/Users/robertseedorf/PycharmProjects/GraphDb/csv/input.csv'
         test_data = exe_read(file_path, shuffle=shuffle)
         self.test_data = prc_slice(test_data, stop=stop, start=start)
 
@@ -61,7 +63,7 @@ class classification_module():
         """
         This generator applies the constructed composite object, self.classifier, to yield determined classification.
 
-        `param strings`: the 0 or more strings to be classified
+        `strings`: the 0 or more strings to be classified
         `yield`: the classification of the associated string.
         """
         for entry in entries:
@@ -79,6 +81,7 @@ class classification_module():
         errors = []
         for data, _class in self.test_data:
             guess = next(self.classify(data))
+            print 'data : {:<20} guess : {:<10} classified : {:<20}'.format(data, guess, _class)
             if guess != _class:
                 errors.append((_class, guess, data))
         for _class, guess, data in sorted(errors):
@@ -89,45 +92,50 @@ class classification_module():
         for entry, cat in self.test_data:
             feats = extract_features(entry)
             self.test_set.append((feats, cat))
-        print 'Accuracy:\t{}%'.format(nltk.classify.accuracy(self.classifier, self.test_set) * 100)
 
         # Automated display of useful classifier features
         print self.classifier.show_most_informative_features()
 
         # Approx error estimation
-        num_errors = len(errors)
-        print '# of errors:\t{}'.format(num_errors)
-        return num_errors
+        return len(errors)
 
-    def run(self, file_path, dev=None):
+    def run_dev_testing(self, file_path=local_file_path, test_data=None):
         """
-        This method holds the example usage for one run of the program as seen fit.
+        This method holds the dev testing staging for development
 
-        `param file_path`: file path to be read for input data to be classified
-        `param dev`: optional, switch for dev_testing
+        `file_path`: file path to be read for input data to be classified
+        `dev`: optional, switch for dev_testing
         """
         # demo usage
-        self.instantiate_classifier()
-        self.read_test_data(file_path, shuffle=1,stop=0.1)
-        if dev:
-            num_errors = self.dev_testing() # dev testing - all the work to do
-            print 'Tests conducted:{}'.format(len(self.test_set))
+        if test_data is None:
+            self.read_test_data(file_path, shuffle=True,stop=0.1)
         else:
-            print 'APPLIED USAGE' # example deployment
-            for entry, cat in self.test_data:
-                res = next(self.classify(entry))
-                print 'data = {:<20} guess = {:<10} category = {:<20}'.format(entry, res, cat)
+            self.test_data = test_data
+        # dev testing - all the work to do
+        num_errors = self.dev_testing()
+
+        # applied statistics for more knowledge
+        len_test_set = len(self.test_set)
+        accuracy = (float(len_test_set - num_errors) / len_test_set) * 100
+        print 'Tests conducted: {:<6} Num. of errors: {:<6} Acc.: {:<6}%'.format(len_test_set, num_errors, accuracy)
 
 if __name__ == '__main__':
-    # main for execution, for usage see the workings of run method
+    """
+    Main method for usage and testing
+    run with script example script params:
+    words 07/08/94 12:12:00
+    to demo contextual application
+    else used for dev testing the applied classifier for constant improvement and reuse
+    """
     cm = classification_module()
-    file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
-    try:
-        demo = sys.argv[1]
-        cm.instantiate_classifier()
-        entries = ['0xFFF', '07/08/1994', '07/08/14', '12:12:00']
-        cl = cm.classify(*entries)
+    cm.instantiate_classifier()
+    if len(sys.argv) > 1:
+        # contextual application
+        entries = sys.argv[1:]
+        print 'entries form script params: {:<20}'.format(entries)
+        my_classifier = cm.classify(*entries)
         for elem in entries:
-            print elem, next(cl)
-    except Exception as e:
-        cm.run(file_path, dev=1)
+            print 'data: {:<20} classified: {:<10}'.format(elem, next(my_classifier))
+    else:
+        # dev testing
+        cm.run_dev_testing(local_file_path)
