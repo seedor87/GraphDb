@@ -1,5 +1,7 @@
 import csv, random, os
 
+local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
+
 def file_read(file_path):
     """
     Script method to read file into format necessary for future use.
@@ -10,9 +12,9 @@ def file_read(file_path):
     """
     test_data = []
     with open(file_path, 'rb') as csvfile:
-        spamreader = csv.reader(csvfile)
-        headers = spamreader.next()
-        for row in spamreader:
+        reader = csv.reader(csvfile)
+        headers = reader.next()
+        for row in reader:
             test_data.extend(zip(row, headers))
     return test_data
 
@@ -31,6 +33,5 @@ def exe_read(file_path, shuffle=False):
 
 if __name__ == '__main__':
     """ debugging """
-    local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
     exe_read(local_file_path)
     print 'Success'

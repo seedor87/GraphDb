@@ -1,8 +1,10 @@
-import random, nltk, pickle
+import random, nltk, pickle, os
 from feature_extraction import extract_features
 from csv_read import exe_read
 
-default_out_file_name = 'pickled_classifier'
+pickled_classifier_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'resources', 'pickled_classifier')
+local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
+
 
 class classifier_factory():
     """
@@ -45,12 +47,11 @@ class classifier_factory():
         classifier = nltk.NaiveBayesClassifier.train(train_set)
         if out_file is None:
             return classifier
-        fileObject = open(out_file, 'wb')
-        pickle.dump(classifier,fileObject)
-        fileObject.close()
+        with open(out_file, 'wb') as fileObject:
+            pickle.dump(classifier,fileObject)
         print 'Classifier Created Successfully. Pickled in file:', out_file
 
 if __name__ == '__main__':
     """Execute Script"""
-    factory = classifier_factory('C:\\Users\\Bob S\\PycharmProjects\\GraphDb\\csv\\input.csv')
-    factory.make_classifier(out_file=default_out_file_name)
+    factory = classifier_factory(local_file_path)
+    factory.make_classifier(out_file=pickled_classifier_path)

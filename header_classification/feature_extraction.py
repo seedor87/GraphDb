@@ -1,5 +1,4 @@
-
-import string
+import string, re
 
 """
 This file is used to fulfill the requirements of automated pattern recognition throughout.
@@ -9,7 +8,7 @@ These features have been developed for use with the most broad spectrum of input
 
 By housing this work in a separate file, the work becomes a shared resource. This is used predominantly by the make classifier and classification by entry files.
 
-As a prerequisite of training and development, the shared resources of the classifier object being used (see the pickles classifier file) and the method of this file should hold the same state across tests.
+As a prerequisite of training and development, the shared resources of the classifier object being used (see the pickled classifier file) and the method of this file should hold the same state across tests.
 As such all work conducted for testing must be conducted in the following manner in order to uphold the highest level of accuracy and fidelity in training, testing and deployment.
 When this file is changed, a new classifier object must be made.
 During this process, the new classifier is written to the pickled classifier file.
