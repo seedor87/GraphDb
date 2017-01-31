@@ -1,6 +1,6 @@
 import sys, os, csv, random, operator
 from collections import defaultdict
-from classification_module import classification_module, prc_slice
+from classification_module import classification_module
 
 local_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'csv', 'input.csv')
 
@@ -10,7 +10,7 @@ class normalizer():
         self.cm = classification_module()
         self.cm.instantiate_classifier()
 
-    def determine_header(self, entries, shuffle=False, stop=0.1):
+    def determine_header(self, entries, shuffle=False, size=1000):
         """
         This method is used to encapsulate the ability to categorically decide what classification is used to make the header of the csv
         By redundantly applying the classification technique of the classification_module we can decide what class to write in as a header for the output csv
@@ -19,10 +19,10 @@ class normalizer():
         `shuffle:` the optional parameter to randomize data for improved classification
         `stop`: default value is 10%, the point at which we stop parsing the entries to save runtime cycles
         """
-        categories = defaultdict(int)
         if shuffle:
             random.shuffle(entries)
-        _entries = prc_slice(entries, start=0.0, stop=stop)
+        _entries = entries[:size]
+        categories = defaultdict(int)
         for classification in self.cm.classify(*_entries):
             categories[classification] += 1
         return max(categories.iteritems(), key=operator.itemgetter(1))[0]
