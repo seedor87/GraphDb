@@ -1,6 +1,9 @@
 
 import string, re
 
+
+# Implementing the regular expressions into the feature extractor. This will increase the accuracy of the
+# learner to recognize these formats as the different categories.
 select_expressions = ['(([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)(AM|PM)?',
                       '((0\d|1[0-2])(/|-)([0-2]\d|3[0-1])(/|-)(\d{2}|\d{4})|' +
                       '([0-2]\d|3[0-1])(/|-)(0\d|1[0-2])(/|-)(\d{2}|\d{4}))',
@@ -10,6 +13,8 @@ select_expressions = ['(([0-1]\d|2[0-3]):[0-5]\d:[0-5]\d)(AM|PM)?',
                       '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)', '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)', '.+@.+\.\w+',
                       '(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})']
 
+# compares the above stated regular expressions with the data from the CSV file. If there is a match, it
+# stores a 1, else it stores a 0
 def extract_features(data):
     ret = {}
     for pattern in select_expressions:
